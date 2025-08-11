@@ -1,0 +1,18 @@
+MaxEventSize: 0 
+Writable:
+  LogLevel: DEBUG
+
+Service:
+  Host: 172.16.19.101
+  Port: 59911
+  StartupMsg: device lora agent started
+
+MessageBus:
+  Optional:
+    ClientId: device-lora-agent
+
+Device:
+  EnableAsyncReadings: true     # 开启异步上报
+  AsyncBufferSize: 16           # 设置异步上报缓冲通道个数
+  ProfilesDir: "./res/profiles"
+  DevicesDir: "./res/devices"
