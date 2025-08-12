@@ -8,7 +8,7 @@ import (
 )
 
 func (d *LoraAgentDriver) AsyncReporting(deviceName string, sourceName string, values map[string]interface{}) {
-	d.lc.Infof("[AsyncReporting] values=%#v", values)
+	// d.lc.Infof("[AsyncReporting] values=%#v", values)
 
 	if len(values) == 0 {
 		d.lc.Infof("AsyncReporting: 没有要上报的值")
@@ -63,6 +63,6 @@ func (d *LoraAgentDriver) AsyncReporting(deviceName string, sourceName string, v
 	// 推送到 SDK 异步通道
 	d.asyncCh <- asyncValues
 
-	d.lc.Infof("AsyncValues pushed: device=%s source=%s count=%d",
-		deviceName, sourceName, len(cvs))
+	// d.lc.Infof("AsyncValues pushed: device=%s source=%s count=%d",
+	// 	deviceName, sourceName, len(cvs))
 }

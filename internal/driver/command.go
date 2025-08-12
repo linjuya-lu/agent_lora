@@ -85,7 +85,7 @@ func (d *LoraAgentDriver) handleResetCommand(deviceName string) error {
 	return nil
 }
 
-func (d *LoraAgentDriver) handleTimeParameterQuery(deviceName string) error {
+func (d *LoraAgentDriver) handleGetData(deviceName string) error {
 	d.lc.Infof("开始处理复位命令: %s", deviceName)
 	// 获取设备的 EID 字符串
 	eidValue, ok := config.GetDeviceValue(deviceName, "eid")

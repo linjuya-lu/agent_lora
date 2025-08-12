@@ -14,7 +14,7 @@ deviceResources:
       readWrite: "W"        
       units: ""            
       defaultValue: "0"     
-  - name: "Routing_Information"   # 路由信息 <EID> <EID TYPE> <EID STA> <EID PARANT>
+  - name: "topologyDiagram"   # 路由信息 <EID> <EID TYPE> <EID STA> <EID PARANT>
     isHidden: true
     description: "任意 JSON 对象"
     properties:
@@ -30,11 +30,35 @@ deviceResources:
       readWrite: "R"                 
       units: ""                      
       defaultValue: "238A08262316"    
+  - name: "getdata"  
+    isHidden: true
+    description: "0未开启 1网关监测数据查询"
+    properties:
+      valueType: "Int8"    
+      readWrite: "W"       
+      units: ""
+      defaultValue: "0"  
+  - name: "reset"  
+    isHidden: true
+    description: "0未开启 1网关复位"
+    properties:
+      valueType: "Int8"    
+      readWrite: "W"       
+      units: ""
+      defaultValue: "0"  
+  - name: "settime"  
+    isHidden: true
+    description: "0未开启 1设置时间"
+    properties:
+      valueType: "Int8"    
+      readWrite: "W"       
+      units: ""
+      defaultValue: "0"  
 deviceCommands:
   -
-    name: "Command_Router_Parameter_Query"
+    name: "commandTopologyDiagram"
     readWrite: "W"
     isHidden: false
     resourceOperations:
-      - { deviceResource: "Router_Parameter_Query", defaultValue: "0" }
+      - { deviceResource: "topologyDiagram", defaultValue: "0" }
 

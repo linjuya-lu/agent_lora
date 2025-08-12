@@ -9,6 +9,7 @@ package driver
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -45,7 +46,7 @@ func (d *LoraAgentDriver) Initialize(sdk interfaces.DeviceServiceSDK) error {
 	d.asyncCh = sdk.AsyncValuesChannel()
 
 	// —— 1. 初始化 MQTT 客户端 —— //
-	brokerURL := "tcp://localhost:1883"
+	brokerURL := "tcp://172.16.19.101:1883"
 	clientID := "lora-agent-client"
 
 	client, err := mqttclient.NewClient(brokerURL, clientID)
@@ -65,6 +66,10 @@ func (d *LoraAgentDriver) Start() error {
 	// 初始化资源
 	if err := config.InitDeviceResources(devicesYAML, profilesDir); err != nil {
 		return fmt.Errorf("初始化设备资源失败: %w", err)
+	}
+	//订阅对应主题
+	if err := mqttclient.SubscribeSinkData(d.mqttClient, "edgex/service/data/sink", 0); err != nil {
+		log.Fatal(err)
 	}
 	d.lc.Infof("lora 代理已启动")
 	return nil
@@ -116,52 +121,23 @@ func (d *LoraAgentDriver) HandleWriteCommands(deviceName string, protocols map[s
 		cv := params[i]
 		// 命令类型转换
 		v, _ := cv.Int8Value()
-		d.lc.Infof("Int8Value = %d", v)
-		// 如果是时间参数查询且值为 1
-		if resName == "Time_Parameter_Query" && v == 1 {
-			if err := d.handleTimeParameterQuery(deviceName); err != nil {
+		// 如果是网关监测数据查询命令且值为 1
+		if resName == "getdata" && v == 1 {
+			if err := d.handleGetData(deviceName); err != nil {
 				return err
 			}
 		}
-		// 如果是时间参数设置且值为 1
-		if resName == "Time_Parameter_Set" && v == 1 {
+		// 如果是网关复位命令且值为 1
+		if resName == "reset" && v == 1 {
 			if err := d.handleTimeParameterSet(deviceName); err != nil {
 				return err
 			}
 		}
-		// 如果是复位命令且值为 1
-		if resName == "Reset_Set" && v == 1 {
+		// 如果是设置时间命令且值为 1
+		if resName == "settime" && v == 1 {
 			if err := d.handleResetCommand(deviceName); err != nil {
 				return err
 			}
-		}
-		// 如果是ID查询命令且值为 1
-		if resName == "ID_Query" && v == 1 {
-			if err := d.handleIdQuery(deviceName); err != nil {
-				return err
-			}
-		}
-		// 如果是所有通用参数查询命令且值为 1
-		if resName == "General_Parameter_Query" && v == 1 {
-			if err := d.handleGeneParaQuery(deviceName); err != nil {
-				return err
-			}
-		}
-		// 如果是所有告警数据查询命令且值为 1
-		if resName == "Alarm_Parameter_Query" && v == 1 {
-			if err := d.handleIdAlarmParaQuery(deviceName); err != nil {
-				return err
-			}
-		}
-		// 如果是所有检测参数查询命令且值为 1
-		if resName == "Monitoring_Data_Query" && v == 1 {
-			if err := d.handleIdMoniDataQuery(deviceName); err != nil {
-				return err
-			}
-		}
-		// 如果是网络拓扑查询命令且值为 1
-		if resName == "Router_Parameter_Query" && v == 1 {
-
 		}
 	}
 	return nil
